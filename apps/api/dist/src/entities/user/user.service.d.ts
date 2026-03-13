@@ -1,0 +1,118 @@
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { PrismaService } from 'src/prisma';
+import { User } from 'generated/prisma/client';
+export declare class UserService {
+    private readonly prismaService;
+    private readonly logger;
+    constructor(prismaService: PrismaService);
+    create(createUserDto: CreateUserDto): Promise<{
+        id: string;
+        username: string;
+        firstName: string;
+        lastName: string;
+        role: import("generated/prisma/client").Role[];
+        email: string;
+        phone: string;
+        age: number;
+        address: string;
+        avatar: string;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    findAll(): import("../../../generated/prisma/internal/prismaNamespace").PrismaPromise<{
+        id: string;
+        username: string;
+        password: string;
+        firstName: string;
+        lastName: string;
+        role: import("generated/prisma/client").Role[];
+        email: string;
+        phone: string;
+        age: number;
+        address: string;
+        avatar: string;
+        createdAt: Date;
+        updatedAt: Date;
+    }[]>;
+    findAllWithoutPasswords(): Promise<Omit<User, 'password'>[]>;
+    findById(id: string): Promise<{
+        id: string;
+        username: string;
+        password: string;
+        firstName: string;
+        lastName: string;
+        role: import("generated/prisma/client").Role[];
+        email: string;
+        phone: string;
+        age: number;
+        address: string;
+        avatar: string;
+        createdAt: Date;
+        updatedAt: Date;
+    } | null>;
+    findByUsername(username: string): Promise<{
+        id: string;
+        username: string;
+        password: string;
+        firstName: string;
+        lastName: string;
+        role: import("generated/prisma/client").Role[];
+        email: string;
+        phone: string;
+        age: number;
+        address: string;
+        avatar: string;
+        createdAt: Date;
+        updatedAt: Date;
+    } | null>;
+    findByEmail(email: string): Promise<{
+        id: string;
+        username: string;
+        password: string;
+        firstName: string;
+        lastName: string;
+        role: import("generated/prisma/client").Role[];
+        email: string;
+        phone: string;
+        age: number;
+        address: string;
+        avatar: string;
+        createdAt: Date;
+        updatedAt: Date;
+    } | null>;
+    findByPhone(phone: string): Promise<{
+        id: string;
+        username: string;
+        password: string;
+        firstName: string;
+        lastName: string;
+        role: import("generated/prisma/client").Role[];
+        email: string;
+        phone: string;
+        age: number;
+        address: string;
+        avatar: string;
+        createdAt: Date;
+        updatedAt: Date;
+    } | null>;
+    update(id: string, updateUserDto: UpdateUserDto): import("../../../generated/prisma/models").Prisma__UserClient<{
+        id: string;
+        username: string;
+        password: string;
+        firstName: string;
+        lastName: string;
+        role: import("generated/prisma/client").Role[];
+        email: string;
+        phone: string;
+        age: number;
+        address: string;
+        avatar: string;
+        createdAt: Date;
+        updatedAt: Date;
+    }, never, import("@prisma/client/runtime/client").DefaultArgs, {
+        omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig | undefined;
+    }>;
+    remove(id: number): string;
+    private hashPassword;
+}

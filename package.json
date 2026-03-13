@@ -4,7 +4,16 @@
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
-    "generate": "turbo generate"
+    "lint": "turbo lint",
+    "format": "turbo format",
+    "test": "turbo test",
+    "type-check": "turbo type-check",
+    "generate": "turbo generate",
+    "clean": "turbo clean && rm -rf node_modules",
+    "dev:api": "turbo dev --filter=@repo/api",
+    "dev:web": "turbo dev --filter=@repo/web",
+    "db:generate": "turbo generate --filter=@repo/api",
+    "db:migrate": "npm run migrate:dev --workspace=@repo/api"
   },
   "workspaces": [
     "apps/*",
@@ -12,5 +21,9 @@
   ],
   "devDependencies": {
     "turbo": "^2.8.16"
+  },
+  "packageManager": "npm@10.0.0",
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

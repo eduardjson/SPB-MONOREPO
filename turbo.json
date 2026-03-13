@@ -1,16 +1,65 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "globalDependencies": ["**/.env.*local"],
+  "globalEnv": [
+    "NODE_ENV",
+    "PORT",
+    "DATABASE_URL",
+    "JWT_SECRET",
+    "API_URL",
+    "VITE_API_URL"
+  ],
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"]
+      "outputs": ["dist/**", ".next/**", "build/**"],
+      "env": ["NODE_ENV", "API_URL", "VITE_API_URL"]
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
+    "lint": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "format": {
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": [],
+      "env": ["NODE_ENV"]
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
     "generate": {
+      "cache": false,
+      "dependsOn": [],
+      "outputs": ["node_modules/.prisma/**", "src/generated/**"]
+    },
+    "clean": {
       "cache": false
+    },
+    "@repo/api#dev": {
+      "cache": false,
+      "persistent": true,
+      "env": ["PORT", "DATABASE_URL", "JWT_SECRET"]
+    },
+    "@repo/web#dev": {
+      "cache": false,
+      "persistent": true,
+      "env": ["VITE_API_URL"]
+    },
+    "@repo/api#build": {
+      "dependsOn": ["^build", "generate"],
+      "outputs": ["dist/**"]
+    },
+    "@repo/api#generate": {
+      "cache": false,
+      "outputs": ["node_modules/.prisma/**", "src/generated/**"]
     }
   }
 }

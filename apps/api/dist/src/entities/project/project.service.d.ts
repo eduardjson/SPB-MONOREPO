@@ -11,8 +11,8 @@ export declare class ProjectService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         name: string;
+        description: string | null;
         status: import("../../../generated/prisma/enums").ProjectStatus;
     }>;
     findAll(): Promise<({
@@ -30,31 +30,31 @@ export declare class ProjectService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         name: string;
+        description: string | null;
         status: import("../../../generated/prisma/enums").ProjectStatus;
     })[]>;
     findOne(id: string): Promise<{
         estimate: ({
             items: {
                 id: string;
+                name: string;
                 description: string | null;
                 unit: string;
                 productId: string | null;
-                name: string;
                 quantity: number;
-                estimateId: string;
                 price: number;
-                total: number;
                 costType: import("../../../generated/prisma/enums").CostType;
+                estimateId: string;
+                total: number;
             }[];
         } & {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            laborCost: number | null;
             projectId: string;
             totalCost: number;
-            laborCost: number | null;
             materialsCost: number | null;
         }) | null;
         images: {
@@ -75,8 +75,8 @@ export declare class ProjectService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         name: string;
+        description: string | null;
         status: import("../../../generated/prisma/enums").ProjectStatus;
     }>;
     update(id: string, dto: UpdateProjectDto, files?: {
@@ -86,23 +86,23 @@ export declare class ProjectService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         name: string;
+        description: string | null;
         status: import("../../../generated/prisma/enums").ProjectStatus;
     }>;
     delete(id: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         name: string;
+        description: string | null;
         status: import("../../../generated/prisma/enums").ProjectStatus;
     }>;
     getImage(id: string): Promise<{
         id: string;
         createdAt: Date;
-        projectId: string;
         data: import("@prisma/client/runtime/client").Bytes;
+        projectId: string;
         filename: string;
         mimeType: string;
         size: number;
@@ -111,8 +111,8 @@ export declare class ProjectService {
     getDocument(id: string): Promise<{
         id: string;
         createdAt: Date;
-        projectId: string;
         data: import("@prisma/client/runtime/client").Bytes;
+        projectId: string;
         filename: string;
         mimeType: string;
         size: number;
@@ -121,8 +121,8 @@ export declare class ProjectService {
     deleteImage(id: string): Promise<{
         id: string;
         createdAt: Date;
-        projectId: string;
         data: import("@prisma/client/runtime/client").Bytes;
+        projectId: string;
         filename: string;
         mimeType: string;
         size: number;
@@ -131,8 +131,8 @@ export declare class ProjectService {
     deleteDocument(id: string): Promise<{
         id: string;
         createdAt: Date;
-        projectId: string;
         data: import("@prisma/client/runtime/client").Bytes;
+        projectId: string;
         filename: string;
         mimeType: string;
         size: number;

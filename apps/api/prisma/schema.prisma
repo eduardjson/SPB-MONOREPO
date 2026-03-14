@@ -12,7 +12,7 @@ generator client {
 
 generator typescript {
   provider = "prisma-generator-typescript-interfaces"
-  output   = "../../packages/types/src/dto/generated.ts"
+  output   = "../../../packages/types/src/dto/generated.ts"
 }
 
 

@@ -10,7 +10,6 @@
       "outputs": ["dist/**", ".next/**", "build/**"],
       "env": ["NODE_ENV", "API_URL", "VITE_API_URL"]
     },
-
     "dev": {
       "cache": false,
       "persistent": true
@@ -41,17 +40,14 @@
       "dependsOn": ["^build", "@repo/api#generate"],
       "outputs": ["dist/**"]
     },
-
     "@repo/api#generate": {
       "cache": false,
       "outputs": ["node_modules/.prisma/**", "src/generated/**"]
     },
-
     "@repo/api#migrate:dev": {
       "cache": false,
       "dependsOn": ["@repo/api#generate"]
     },
-
     "@repo/api#db:studio": {
       "cache": false,
       "persistent": true

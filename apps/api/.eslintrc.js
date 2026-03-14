@@ -3,7 +3,5 @@ module.exports = {
   parserOptions: {
     project: './tsconfig.json',
   },
-  rules: {
-    // Специфические правила для NestJS, если нужны
-  },
+  rules: {},
 };

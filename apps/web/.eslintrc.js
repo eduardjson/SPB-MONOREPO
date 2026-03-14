@@ -16,8 +16,5 @@ module.exports = {
       version: 'detect',
     },
   },
-  rules: {
-    // Специфические правила React
-    'react/react-in-jsx-scope': 'off', // для Vite не нужно
-  },
+  rules: {},
 };

@@ -7,6 +7,29 @@ generator typescript {
   provider = "prisma-generator-typescript-interfaces"
   output   = "../../../packages/types/src/dto/generated.ts"
 }
+
+generator nestjsDto {
+  provider                        = "prisma-types-generator"
+  output                          = "../../../packages/types/src/generated"
+  outputToNestJsResourceStructure = "true"    
+  flatResourceStructure           = "false"
+  createDtoPrefix                 = "Create"
+  updateDtoPrefix                 = "Update"
+  dtoSuffix                       = "Dto"
+  entityPrefix                    = ""
+  entitySuffix                     = "Entity"
+  reExport                        = "true"    
+  fileNamingStyle                 = "kebab"    
+  classValidation                 = "true"    
+  noDependencies                  = "false"  
+}
+
+generator enums {
+  provider = "prisma-enums-generator"
+  output   = "../../../packages/types/src/generated/enums"
+  isExport = true
+  useComma = true
+}
 datasource db {
   provider = "postgresql"
 }

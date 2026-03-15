@@ -1,4 +1,4 @@
-import { ShipmentStatus } from '@prisma/client';
+import { ShipmentStatus } from '../../../shared/enums';
 import { WarehouseInterface } from '../../warehouse/entities/warehouse.entity';
 import { ObjectInterface } from '../../object/entities/object.entity';
 import { ShipmentItemInterface } from '../../shipment-item/entities/shipment-item.entity';

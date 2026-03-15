@@ -1,4 +1,4 @@
-import { CostType } from '@prisma/client';
+import { CostType } from '../../../shared/enums';
 import { EstimateInterface } from '../../estimate/entities/estimate.entity';
 
 export interface EstimateItemInterface {

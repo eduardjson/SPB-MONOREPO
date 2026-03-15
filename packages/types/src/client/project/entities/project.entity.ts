@@ -1,4 +1,4 @@
-import { ProjectStatus } from '@prisma/client';
+import { ProjectStatus } from '../../../shared/enums';
 import { ProjectImageInterface } from '../../project-image/entities/project-image.entity';
 import { ProjectDocumentInterface } from '../../project-document/entities/project-document.entity';
 import { EstimateInterface } from '../../estimate/entities/estimate.entity';

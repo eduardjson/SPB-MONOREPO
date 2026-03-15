@@ -1,4 +1,4 @@
-import { DocumentType } from '@prisma/client';
+import { DocumentType } from '../../../shared/enums';
 import { ProjectInterface } from '../../project/entities/project.entity';
 
 export interface ProjectDocumentInterface {

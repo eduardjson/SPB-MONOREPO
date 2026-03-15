@@ -1,4 +1,4 @@
-import { Role } from '@prisma/client';
+import { Role } from '../../../shared/enums';
 import { TokenInterface } from '../../token/entities/token.entity';
 
 export interface UserInterface {

@@ -30,6 +30,14 @@ generator enums {
   isExport = true
   useComma = true
 }
+
+generator clientTypes {
+  provider        = "prisma-types-generator"
+  output          = "../../../packages/types/src/client"
+  noDependencies  = "true"     
+  outputType      = "interface" 
+
+}
 datasource db {
   provider = "postgresql"
 }

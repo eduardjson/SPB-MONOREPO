@@ -1,1 +1,1 @@
-export * from './dto/generated';
+export * from './shared/enums';

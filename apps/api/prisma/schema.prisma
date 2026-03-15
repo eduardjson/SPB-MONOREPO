@@ -3,10 +3,10 @@ generator client {
   output       = "../generated/prisma"
   moduleFormat = "cjs"
 }
-generator typescript {
-  provider = "prisma-generator-typescript-interfaces"
-  output   = "../../../packages/types/src/dto/generated.ts"
-}
+// generator typescript {
+//   provider = "prisma-generator-typescript-interfaces"
+//   output   = "../../../packages/types/src/dto/generated.ts"
+// }
 
 generator clientDto {
   provider                        = "prisma-types-generator"
@@ -27,7 +27,7 @@ generator clientDto {
 
 generator enums {
   provider = "prisma-enums-generator"
-  output   = "../../../packages/types/src/shared/enums"
+  output   = "../../../packages/types/src/shared/enums.ts"
   isExport = true
   useComma = true
 }

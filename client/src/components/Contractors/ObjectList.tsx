@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import {
-  Box,
-  Typography,
   Button,
+  Chip,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -10,25 +10,17 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  IconButton,
-  Chip,
-} from "@mui/material";
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Visibility as ViewIcon,
-} from "@mui/icons-material";
-import { useGetObjectsQuery, useDeleteObjectMutation } from "../../services";
-import { ObjectForm } from "./ObjectForm";
-import { ObjectDetails } from "./ObjectDetails";
-import { Object as ObjectType } from "../../types";
+  Typography,
+} from '@mui/material';
+import React, { useState } from 'react';
+import { useDeleteObjectMutation, useGetObjectsQuery } from '../../services';
+import { Object as ObjectType } from '../../types';
+import { ObjectForm } from './ObjectForm';
 
 export const ObjectList: React.FC = () => {
   const { data: objects, isLoading } = useGetObjectsQuery();
   const [deleteObject] = useDeleteObjectMutation();
   const [openForm, setOpenForm] = useState(false);
-  const [openDetails, setOpenDetails] = useState(false);
   const [selectedObject, setSelectedObject] = useState<ObjectType | null>(null);
 
   const handleEdit = (object: ObjectType) => {
@@ -36,25 +28,20 @@ export const ObjectList: React.FC = () => {
     setOpenForm(true);
   };
 
-  const handleView = (object: ObjectType) => {
-    setSelectedObject(object);
-    setOpenDetails(true);
-  };
-
   const handleDelete = async (id: string) => {
-    if (window.confirm("Вы уверены, что хотите удалить объект?")) {
+    if (window.confirm('Вы уверены, что хотите удалить объект?')) {
       await deleteObject(id);
     }
   };
 
   if (isLoading) {
-    return <Typography>Загрузка...</Typography>;
+    return <div className="p-4 text-gray-600">Загрузка...</div>;
   }
 
   return (
-    <Box>
-      <div className="flex flex-row justify-between">
-        <Typography variant="h5">Заказчики</Typography>{" "}
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between items-center mb-4">
+        <Typography variant="h5">Заказчики</Typography>{' '}
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -62,86 +49,72 @@ export const ObjectList: React.FC = () => {
             setSelectedObject(null);
             setOpenForm(true);
           }}
+          className="bg-blue-600 hover:bg-blue-700 normal-case"
         >
           Добавить объект
         </Button>
       </div>
 
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} className="shadow-sm">
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>Название</TableCell>
-              <TableCell>Адрес</TableCell>
-              <TableCell>Описание</TableCell>
-              <TableCell>Количество отгрузок</TableCell>
-              <TableCell>Дата создания</TableCell>
-              <TableCell>Действия</TableCell>
+            <TableRow className="bg-gray-50">
+              <TableCell className="font-semibold">Название</TableCell>
+              <TableCell className="font-semibold">Адрес</TableCell>
+              <TableCell className="font-semibold">Описание</TableCell>
+              <TableCell className="font-semibold">Количество отгрузок</TableCell>
+              <TableCell className="font-semibold">Дата создания</TableCell>
+              <TableCell className="font-semibold">Действия</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {objects?.map(object => (
-              <TableRow key={object.id}>
+            {objects?.map((object) => (
+              <TableRow key={object.id} className="hover:bg-gray-50">
                 <TableCell>{object.name}</TableCell>
-                <TableCell>{object.address || "—"}</TableCell>
+                <TableCell>{object.address || '—'}</TableCell>
                 <TableCell>
                   {object.description
                     ? object.description.length > 50
                       ? `${object.description.substring(0, 50)}...`
                       : object.description
-                    : "—"}
+                    : '—'}
                 </TableCell>
                 <TableCell>
                   <Chip
                     label={object.shipments?.length || 0}
                     size="small"
-                    color={object.shipments?.length ? "primary" : "default"}
+                    color={object.shipments?.length ? 'primary' : 'default'}
+                    className="font-medium"
                   />
                 </TableCell>
+                <TableCell>{new Date(object.created_at).toLocaleDateString()}</TableCell>
                 <TableCell>
-                  {new Date(object.created_at).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  <IconButton
-                    size="small"
-                    onClick={() => handleView(object)}
-                    title="Просмотр"
-                  >
-                    <ViewIcon />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    onClick={() => handleEdit(object)}
-                    title="Редактировать"
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    onClick={() => handleDelete(object.id)}
-                    title="Удалить"
-                    color="error"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <div className="flex gap-1">
+                    <IconButton
+                      size="small"
+                      onClick={() => handleEdit(object)}
+                      title="Редактировать"
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleDelete(object.id)}
+                      title="Удалить"
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <ObjectForm
-        open={openForm}
-        onClose={() => setOpenForm(false)}
-        object={selectedObject}
-      />
-      {selectedObject && (
-        <ObjectDetails
-          open={openDetails}
-          onClose={() => setOpenDetails(false)}
-          objectId={selectedObject.id}
-        />
-      )}
-    </Box>
+
+      <ObjectForm open={openForm} onClose={() => setOpenForm(false)} object={selectedObject} />
+    </div>
   );
 };

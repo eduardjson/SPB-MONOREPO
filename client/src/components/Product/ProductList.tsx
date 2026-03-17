@@ -3,8 +3,8 @@ import {
   Avatar,
   Box,
   Button,
+  Card,
   LinearProgress,
-  Paper,
   Table,
   TableCell,
   TableContainer,
@@ -57,7 +57,7 @@ export const ProductList = () => {
     count: sortedProducts.length,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => 52, // Высота строки в пикселях
-    overscan: 5, // Количество строк для предварительной загрузки
+    overscan: 20, // Количество строк для предварительной загрузки
   });
 
   const handleRequestSort = (property: keyof ProductDTO) => {
@@ -101,10 +101,10 @@ export const ProductList = () => {
   ];
 
   return (
-    <Box sx={{ height: '80%', width: '100%', p: 2 }}>
+    <div className="flex flex-col gap-4 h-full">
       {isLoading && <LinearProgress />}
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+      <div className="flex flex-row justify-between">
         <Typography variant="h5">Список товаров</Typography>
         <Tooltip title="Добавьте позицию в номенклатуру">
           <Button
@@ -115,13 +115,10 @@ export const ProductList = () => {
             Добавить товар
           </Button>
         </Tooltip>
-      </Box>
-
+      </div>
       <ProductFilter />
-
       {filteredProducts && (
-        <Paper elevation={3} sx={{ mt: 2, borderRadius: 2, overflow: 'hidden', height: '80%' }}>
-          {/* Заголовок таблицы */}
+        <Card>
           <TableContainer
             component="div"
             sx={{ borderBottom: '1px solid', borderColor: 'divider' }}
@@ -162,7 +159,7 @@ export const ProductList = () => {
           <Box
             ref={tableContainerRef}
             sx={{
-              height: 'calc(100vh - 300px)',
+              height: 'calc(100vh - 500px)',
               overflow: 'auto',
               position: 'relative',
             }}
@@ -222,8 +219,6 @@ export const ProductList = () => {
               })}
             </Box>
           </Box>
-
-          {/* Информация о количестве записей */}
           <Box
             sx={{
               p: 1,
@@ -236,8 +231,8 @@ export const ProductList = () => {
               Всего записей: {sortedProducts.length}
             </Typography>
           </Box>
-        </Paper>
+        </Card>
       )}
-    </Box>
+    </div>
   );
 };

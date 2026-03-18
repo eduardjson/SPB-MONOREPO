@@ -5,7 +5,6 @@ import {
   Inventory as InventoryIcon,
 } from '@mui/icons-material';
 import {
-  Box,
   Button,
   Chip,
   IconButton,
@@ -53,7 +52,7 @@ export const WarehouseList: React.FC = () => {
   }
 
   return (
-    <Box>
+    <div className="flex flex-col gap-4">
       <div className="flex flex-row justify-between">
         <Typography variant="h5">Склады</Typography>
         <Button
@@ -140,6 +139,6 @@ export const WarehouseList: React.FC = () => {
           warehouseName={selectedWarehouse.name}
         />
       )}
-    </Box>
+    </div>
   );
 };

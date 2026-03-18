@@ -62,7 +62,7 @@ export const PriceListTable: React.FC = () => {
   return (
     <Box className="flex flex-col gap-4">
       <div className="flex flex-row justify-between h-9">
-        <Typography variant="h5">Прайс листы</Typography>
+        <Typography variant="h5">Просмотр прайсов</Typography>
       </div>
       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
         <TextField

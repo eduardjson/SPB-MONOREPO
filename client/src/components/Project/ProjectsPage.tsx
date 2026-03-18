@@ -111,7 +111,7 @@ export const ProjectsPage: React.FC = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
-        <Typography variant="h5">Проекты</Typography>
+        <Typography variant="h5">Работа с проектными сметами</Typography>
         <Button
           variant="contained"
           color="primary"

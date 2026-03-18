@@ -50,7 +50,7 @@ export const ObjectList: React.FC = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row justify-between">
-        <Typography variant="h5">Заказчики</Typography>
+        <Typography variant="h5">Текущие обьекты</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}

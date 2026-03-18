@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react';
 import { Profile } from '../Profile/Profile';
 
 const tabs = [
-  { label: 'Номенклатура', path: '/products' },
-  { label: 'Прайсы', path: '/prices' },
-  { label: 'Управление складом', path: '/warehouses' },
-  { label: 'Заказчики', path: '/contractors' },
-  { label: 'Перемещения', path: '/shipments' },
-  { label: 'Чат документов', path: '/free-chat' },
-  { label: 'Доступные проекты', path: '/projects' },
+  { label: 'Позиции', path: '/products' },
+  { label: 'Цены', path: '/prices' },
+  { label: 'Склады', path: '/warehouses' },
+  { label: 'Обьекты', path: '/contractors' },
+  { label: 'Отгрузки', path: '/shipments' },
+  { label: 'Чат', path: '/free-chat' },
+  { label: 'Сметы', path: '/projects' },
   { label: 'Сотрудники', path: '/employees' },
 ];
 

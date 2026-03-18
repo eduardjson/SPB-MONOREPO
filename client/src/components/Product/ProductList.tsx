@@ -105,7 +105,7 @@ export const ProductList = () => {
       {isLoading && <LinearProgress />}
 
       <div className="flex flex-row justify-between">
-        <Typography variant="h5">Список товаров</Typography>
+        <Typography variant="h5">Работа с номенклатурой</Typography>
         <Tooltip title="Добавьте позицию в номенклатуру">
           <Button
             onClick={() => navigate({ to: '/products/add' })}

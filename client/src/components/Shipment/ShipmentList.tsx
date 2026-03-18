@@ -81,7 +81,7 @@ export const ShipmentList: React.FC = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row justify-between">
-        <Typography variant="h5">Отгрузка со склада</Typography>
+        <Typography variant="h5">Отгрузка по накладной</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}

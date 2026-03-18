@@ -136,7 +136,7 @@ export const Chat = ({ id, username }: { id: string; username: string }) => {
       justifyContent="space-between"
       className="min-w-100 max-w-250 h-9/10 gap-4 flex flex-col pb-1"
     >
-      <Typography variant="h5">Чат документов</Typography>
+      <Typography variant="h5">Чат для документов</Typography>
 
       {/* Область сообщений с градиентами */}
       <Box sx={{ position: 'relative', flex: 1, minHeight: 0 }}>

@@ -1,33 +1,33 @@
-import React, { useState, useEffect } from "react";
+import {
+  Add as AddIcon,
+  CloudUpload as CloudUploadIcon,
+  Delete as DeleteIcon,
+  Description as DocIcon,
+  TableChart as ExcelIcon,
+  PictureAsPdf as PdfIcon,
+} from '@mui/icons-material';
 import {
   Box,
-  TextField,
   Button,
-  Typography,
-  Paper,
+  Card,
+  CardMedia,
+  CircularProgress,
+  Divider,
   Grid,
   IconButton,
   List,
   ListItem,
-  ListItemText,
   ListItemSecondaryAction,
-  Divider,
+  ListItemText,
+  Paper,
   Tab,
   Tabs,
-  Card,
-  CardMedia,
-  CircularProgress,
-} from "@mui/material";
-import {
-  Delete as DeleteIcon,
-  CloudUpload as CloudUploadIcon,
-  PictureAsPdf as PdfIcon,
-  Description as DocIcon,
-  TableChart as ExcelIcon,
-  Add as AddIcon,
-} from "@mui/icons-material";
-import { useNavigate } from "@tanstack/react-router";
-import { useLazyGetImageBlobQuery } from "../../services";
+  TextField,
+  Typography,
+} from '@mui/material';
+import { useNavigate } from '@tanstack/react-router';
+import React, { useEffect, useState } from 'react';
+import { useLazyGetImageBlobQuery } from '../../services';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -48,7 +48,7 @@ interface EstimateItem {
   quantity: number;
   unit: string;
   price: number;
-  costType: "MATERIAL" | "LABOR";
+  costType: 'MATERIAL' | 'LABOR';
 }
 
 interface ProjectFormProps {
@@ -64,8 +64,8 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
 }) => {
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [imageUrls, setImageUrls] = useState<Map<string, string>>(new Map());
 
   // Файлы
@@ -84,8 +84,8 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
   // Загружаем данные при изменении initialData
   useEffect(() => {
     if (initialData) {
-      setName(initialData.name || "");
-      setDescription(initialData.description || "");
+      setName(initialData.name || '');
+      setDescription(initialData.description || '');
       setExistingImages(initialData.images || []);
       setExistingDocuments(initialData.documents || []);
       setEstimateItems(initialData.estimate?.items || []);
@@ -97,12 +97,12 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
   useEffect(() => {
     const loadExistingImages = async () => {
       if (existingImages.length > 0) {
-        existingImages.forEach(async image => {
+        existingImages.forEach(async (image) => {
           if (!imageUrls.has(image.id)) {
             try {
               const blob = await fetchImageBlob(image.id).unwrap();
               const url = URL.createObjectURL(blob);
-              setImageUrls(prev => new Map(prev).set(image.id, url));
+              setImageUrls((prev) => new Map(prev).set(image.id, url));
             } catch (error) {
               console.error(`Ошибка загрузки изображения ${image.id}:`, error);
             }
@@ -117,7 +117,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
   // Очистка URL при размонтировании
   useEffect(() => {
     return () => {
-      imageUrls.forEach(url => URL.revokeObjectURL(url));
+      imageUrls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
 
@@ -125,20 +125,16 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
     setEstimateItems([
       ...estimateItems,
       {
-        name: "",
+        name: '',
         quantity: 1,
-        unit: "шт",
+        unit: 'шт',
         price: 0,
-        costType: "MATERIAL",
+        costType: 'MATERIAL',
       },
     ]);
   };
 
-  const handleUpdateEstimateItem = (
-    index: number,
-    field: keyof EstimateItem,
-    value: any,
-  ) => {
+  const handleUpdateEstimateItem = (index: number, field: keyof EstimateItem, value: any) => {
     const updated = [...estimateItems];
     updated[index] = { ...updated[index], [field]: value };
     setEstimateItems(updated);
@@ -172,63 +168,55 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
+    formData.append('name', name);
+    formData.append('description', description);
 
     // Добавляем новые изображения
-    newImages.forEach(image => {
-      formData.append("images", image);
+    newImages.forEach((image) => {
+      formData.append('images', image);
     });
 
     // Добавляем новые документы
-    newDocuments.forEach(doc => {
-      formData.append("documents", doc);
+    newDocuments.forEach((doc) => {
+      formData.append('documents', doc);
     });
 
     // Добавляем смету
     formData.append(
-      "estimate",
+      'estimate',
       JSON.stringify({
         laborCost,
         items: estimateItems,
-      }),
+      })
     );
 
     await onSubmit(formData);
   };
 
   const getDocumentIcon = (mimeType: string) => {
-    if (mimeType.includes("pdf")) return <PdfIcon />;
-    if (mimeType.includes("excel") || mimeType.includes("spreadsheet"))
-      return <ExcelIcon />;
+    if (mimeType.includes('pdf')) return <PdfIcon />;
+    if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return <ExcelIcon />;
     return <DocIcon />;
   };
 
-  const totalCost = estimateItems.reduce(
-    (sum, item) => sum + item.quantity * item.price,
-    0,
-  );
+  const totalCost = estimateItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
   // Показываем загрузку, пока initialData загружается
   if (!initialData && loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
         <CircularProgress />
       </Box>
     );
   }
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{ maxWidth: 1200, mx: "auto", p: 3 }}
-    >
+    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
       <Typography variant="h4" gutterBottom>
-        {initialData ? "Редактировать проект" : "Новый проект"}
+        {initialData ? 'Редактировать проект' : 'Новый проект'}
       </Typography>
 
-      <Paper sx={{ width: "100%", mb: 2 }}>
+      <Paper sx={{ width: '100%', mb: 2 }}>
         <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)}>
           <Tab label="Основная информация" />
           <Tab label="Медиафайлы" />
@@ -243,7 +231,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                   fullWidth
                   label="Название проекта"
                   value={name}
-                  onChange={e => setName(e.target.value)}
+                  onChange={(e) => setName(e.target.value)}
                   required
                 />
               </Grid>
@@ -252,7 +240,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                   fullWidth
                   label="Описание"
                   value={description}
-                  onChange={e => setDescription(e.target.value)}
+                  onChange={(e) => setDescription(e.target.value)}
                   multiline
                   rows={4}
                 />
@@ -271,15 +259,11 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                 {/* Существующие изображения */}
                 {existingImages.length > 0 && (
                   <Box sx={{ mb: 3 }}>
-                    <Typography
-                      variant="subtitle2"
-                      color="text.secondary"
-                      gutterBottom
-                    >
+                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                       Загруженные изображения ({existingImages.length})
                     </Typography>
                     <Grid container spacing={1}>
-                      {existingImages.map(img => (
+                      {existingImages.map((img) => (
                         <Grid item xs={4} key={img.id}>
                           <Card>
                             {imageUrls.has(img.id) ? (
@@ -288,16 +272,16 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                                 height="100"
                                 image={imageUrls.get(img.id)}
                                 alt={img.filename}
-                                sx={{ objectFit: "cover" }}
+                                sx={{ objectFit: 'cover' }}
                               />
                             ) : (
                               <Box
                                 sx={{
                                   height: 100,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  bgcolor: "grey.200",
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  bgcolor: 'grey.200',
                                 }}
                               >
                                 <CircularProgress size={30} />
@@ -336,10 +320,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                         secondary={`${(file.size / 1024).toFixed(2)} KB`}
                       />
                       <ListItemSecondaryAction>
-                        <IconButton
-                          edge="end"
-                          onClick={() => removeNewImage(index)}
-                        >
+                        <IconButton edge="end" onClick={() => removeNewImage(index)}>
                           <DeleteIcon />
                         </IconButton>
                       </ListItemSecondaryAction>
@@ -357,15 +338,11 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                 {/* Существующие документы */}
                 {existingDocuments.length > 0 && (
                   <Box sx={{ mb: 3 }}>
-                    <Typography
-                      variant="subtitle2"
-                      color="text.secondary"
-                      gutterBottom
-                    >
+                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                       Загруженные документы ({existingDocuments.length})
                     </Typography>
                     <List>
-                      {existingDocuments.map(doc => (
+                      {existingDocuments.map((doc) => (
                         <ListItem key={doc.id}>
                           {getDocumentIcon(doc.mimeType)}
                           <ListItemText
@@ -407,10 +384,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                         sx={{ ml: 1 }}
                       />
                       <ListItemSecondaryAction>
-                        <IconButton
-                          edge="end"
-                          onClick={() => removeNewDocument(index)}
-                        >
+                        <IconButton edge="end" onClick={() => removeNewDocument(index)}>
                           <DeleteIcon />
                         </IconButton>
                       </ListItemSecondaryAction>
@@ -431,7 +405,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                 label="Стоимость работ"
                 type="number"
                 value={laborCost}
-                onChange={e => setLaborCost(Number(e.target.value))}
+                onChange={(e) => setLaborCost(Number(e.target.value))}
                 fullWidth
                 sx={{ mb: 3 }}
               />
@@ -448,13 +422,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                         fullWidth
                         label="Наименование"
                         value={item.name}
-                        onChange={e =>
-                          handleUpdateEstimateItem(
-                            index,
-                            "name",
-                            e.target.value,
-                          )
-                        }
+                        onChange={(e) => handleUpdateEstimateItem(index, 'name', e.target.value)}
                         size="small"
                       />
                     </Grid>
@@ -464,12 +432,8 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                         label="Кол-во"
                         type="number"
                         value={item.quantity}
-                        onChange={e =>
-                          handleUpdateEstimateItem(
-                            index,
-                            "quantity",
-                            Number(e.target.value),
-                          )
+                        onChange={(e) =>
+                          handleUpdateEstimateItem(index, 'quantity', Number(e.target.value))
                         }
                         size="small"
                       />
@@ -479,13 +443,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                         fullWidth
                         label="Ед."
                         value={item.unit}
-                        onChange={e =>
-                          handleUpdateEstimateItem(
-                            index,
-                            "unit",
-                            e.target.value,
-                          )
-                        }
+                        onChange={(e) => handleUpdateEstimateItem(index, 'unit', e.target.value)}
                         size="small"
                       />
                     </Grid>
@@ -495,12 +453,8 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                         label="Цена"
                         type="number"
                         value={item.price}
-                        onChange={e =>
-                          handleUpdateEstimateItem(
-                            index,
-                            "price",
-                            Number(e.target.value),
-                          )
+                        onChange={(e) =>
+                          handleUpdateEstimateItem(index, 'price', Number(e.target.value))
                         }
                         size="small"
                       />
@@ -517,24 +471,17 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                     <Grid item xs={8} sm={2}>
                       <select
                         value={item.costType}
-                        onChange={e =>
-                          handleUpdateEstimateItem(
-                            index,
-                            "costType",
-                            e.target.value,
-                          )
+                        onChange={(e) =>
+                          handleUpdateEstimateItem(index, 'costType', e.target.value)
                         }
-                        style={{ width: "100%", padding: 8 }}
+                        style={{ width: '100%', padding: 8 }}
                       >
                         <option value="MATERIAL">Материал</option>
                         <option value="LABOR">Работа</option>
                       </select>
                     </Grid>
                     <Grid item xs={4} sm={1}>
-                      <IconButton
-                        color="error"
-                        onClick={() => handleRemoveEstimateItem(index)}
-                      >
+                      <IconButton color="error" onClick={() => handleRemoveEstimateItem(index)}>
                         <DeleteIcon />
                       </IconButton>
                     </Grid>
@@ -553,7 +500,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
 
               <Divider sx={{ my: 3 }} />
 
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Typography variant="h6">
                   Итого: {(totalCost + laborCost).toLocaleString()} ₽
                 </Typography>
@@ -563,15 +510,12 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
         </Box>
       </Paper>
 
-      <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
-        <Button
-          variant="outlined"
-          onClick={() => navigate({ to: "/projects" })}
-        >
+      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+        <Button variant="outlined" onClick={() => navigate({ to: '/projects' })}>
           Отмена
         </Button>
         <Button type="submit" variant="contained" disabled={loading}>
-          {loading ? "Сохранение..." : initialData ? "Сохранить" : "Создать"}
+          {loading ? 'Сохранение...' : initialData ? 'Сохранить' : 'Создать'}
         </Button>
       </Box>
     </Box>

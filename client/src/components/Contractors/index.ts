@@ -1,3 +1,2 @@
-export * from "./ObjectDetails";
-export * from "./ObjectForm";
-export * from "./ObjectList";
+export * from './ObjectForm';
+export * from './ObjectList';

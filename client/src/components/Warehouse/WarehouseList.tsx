@@ -1,8 +1,13 @@
-import React, { useState } from "react";
 import {
-  Box,
-  Typography,
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Inventory as InventoryIcon,
+} from '@mui/icons-material';
+import {
   Button,
+  Chip,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -10,32 +15,21 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  IconButton,
-  Chip,
-} from "@mui/material";
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Inventory as InventoryIcon,
-} from "@mui/icons-material";
+  Typography,
+} from '@mui/material';
+import React, { useState } from 'react';
 
-import {
-  useDeleteWarehouseMutation,
-  useGetWarehousesQuery,
-} from "../../services";
-import { WarehouseForm } from "./WarehouseForm";
-import { AddStockForm } from "./AddStockForm";
-import { Warehouse } from "../../types";
+import { useDeleteWarehouseMutation, useGetWarehousesQuery } from '../../services';
+import { Warehouse } from '../../types';
+import { AddStockForm } from './AddStockForm';
+import { WarehouseForm } from './WarehouseForm';
 
 export const WarehouseList: React.FC = () => {
   const { data: warehouses, isLoading } = useGetWarehousesQuery();
   const [deleteWarehouse] = useDeleteWarehouseMutation();
   const [openForm, setOpenForm] = useState(false);
   const [openStockForm, setOpenStockForm] = useState(false);
-  const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(
-    null,
-  );
+  const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null);
 
   const handleEdit = (warehouse: Warehouse) => {
     setSelectedWarehouse(warehouse);
@@ -48,7 +42,7 @@ export const WarehouseList: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Вы уверены, что хотите удалить склад?")) {
+    if (window.confirm('Вы уверены, что хотите удалить склад?')) {
       await deleteWarehouse(id);
     }
   };
@@ -58,9 +52,9 @@ export const WarehouseList: React.FC = () => {
   }
 
   return (
-    <Box>
+    <div className="flex flex-col gap-4">
       <div className="flex flex-row justify-between">
-        <Typography variant="h5">Склады</Typography>
+        <Typography variant="h5">Работа со складом</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -86,25 +80,20 @@ export const WarehouseList: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {warehouses?.map(warehouse => {
+            {warehouses?.map((warehouse) => {
               const totalItems = warehouse.stockItems?.length || 0;
               const totalQuantity =
-                warehouse.stockItems?.reduce(
-                  (sum, item) => sum + item.quantity,
-                  0,
-                ) || 0;
+                warehouse.stockItems?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
               return (
                 <TableRow key={warehouse.id}>
                   <TableCell>{warehouse.name}</TableCell>
-                  <TableCell>{warehouse.address || "—"}</TableCell>
+                  <TableCell>{warehouse.address || '—'}</TableCell>
                   <TableCell>
                     <Chip label={totalItems} size="small" color="primary" />
                   </TableCell>
                   <TableCell>{totalQuantity} шт</TableCell>
-                  <TableCell>
-                    {new Date(warehouse.created_at).toLocaleDateString()}
-                  </TableCell>
+                  <TableCell>{new Date(warehouse.created_at).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <IconButton
                       size="small"
@@ -150,6 +139,6 @@ export const WarehouseList: React.FC = () => {
           warehouseName={selectedWarehouse.name}
         />
       )}
-    </Box>
+    </div>
   );
 };

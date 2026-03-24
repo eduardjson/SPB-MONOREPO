@@ -1,64 +1,56 @@
-import React, { useEffect, useState } from "react";
 import {
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  Typography,
-  CardActions,
+  Delete,
+  Description as DocumentIcon,
+  Edit,
+  Image as ImageIcon,
+  Visibility,
+} from '@mui/icons-material';
+import {
+  Alert,
   Button,
-  IconButton,
-  Box,
   Chip,
   CircularProgress,
-  Alert,
-} from "@mui/material";
-import {
-  Visibility,
-  Edit,
-  Delete,
-  Image as ImageIcon,
-  Description as DocumentIcon,
-} from "@mui/icons-material";
-import { useNavigate } from "@tanstack/react-router";
+  IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
+import { useNavigate } from '@tanstack/react-router';
+import React, { useEffect, useState } from 'react';
 
 import {
-  useGetProjectsQuery,
   useDeleteProjectMutation,
+  useGetProjectsQuery,
   useLazyGetImageBlobQuery,
-} from "../../services";
+} from '../../services';
 
 export const ProjectsPage: React.FC = () => {
   const navigate = useNavigate();
   const [imageUrls, setImageUrls] = useState<Map<string, string>>(new Map());
   const [loadingImages, setLoadingImages] = useState<Set<string>>(new Set());
 
-  // RTK Query хуки
   const { data: projects = [], isLoading, error } = useGetProjectsQuery();
   const [deleteProject, { isLoading: isDeleting }] = useDeleteProjectMutation();
   const [fetchImageBlob] = useLazyGetImageBlobQuery();
 
-  // Загрузка изображения для карточки
   const loadImageForProject = async (projectId: string, imageId: string) => {
-    // Проверяем, не загружено ли уже
-    if (imageUrls.has(imageId)) return;
+    if (imageUrls.has(imageId) || loadingImages.has(imageId)) return;
 
-    // Проверяем, не загружается ли сейчас
-    if (loadingImages.has(imageId)) return;
-
-    setLoadingImages(prev => new Set(prev).add(imageId));
+    setLoadingImages((prev) => new Set(prev).add(imageId));
 
     try {
       const blob = await fetchImageBlob(imageId).unwrap();
       const url = URL.createObjectURL(blob);
-      setImageUrls(prev => new Map(prev).set(imageId, url));
+      setImageUrls((prev) => new Map(prev).set(imageId, url));
     } catch (error) {
-      console.error(
-        `Ошибка загрузки изображения для проекта ${projectId}:`,
-        error,
-      );
+      console.error(`Ошибка загрузки изображения для проекта ${projectId}:`, error);
     } finally {
-      setLoadingImages(prev => {
+      setLoadingImages((prev) => {
         const newSet = new Set(prev);
         newSet.delete(imageId);
         return newSet;
@@ -66,195 +58,182 @@ export const ProjectsPage: React.FC = () => {
     }
   };
 
-  // Загружаем изображения для всех проектов при получении списка
   useEffect(() => {
-    if (projects.length > 0) {
-      projects.forEach(project => {
-        if (project.images && project.images[0]) {
-          loadImageForProject(project.id, project.images[0].id);
-        }
-      });
-    }
+    projects.forEach((project) => {
+      if (project.images?.[0]) {
+        loadImageForProject(project.id, project.images[0].id);
+      }
+    });
   }, [projects]);
 
-  // Очищаем URL при размонтировании
   useEffect(() => {
-    return () => {
-      imageUrls.forEach(url => URL.revokeObjectURL(url));
-    };
+    return () => imageUrls.forEach((url) => URL.revokeObjectURL(url));
   }, []);
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm("Вы уверены, что хотите удалить проект?")) {
-      try {
-        await deleteProject(id).unwrap();
-        // Очищаем URL удаленного проекта из кэша
-        const project = projects.find(p => p.id === id);
-        if (project?.images?.[0]) {
-          const imageId = project.images[0].id;
-          const url = imageUrls.get(imageId);
-          if (url) {
-            URL.revokeObjectURL(url);
-            setImageUrls(prev => {
-              const newMap = new Map(prev);
-              newMap.delete(imageId);
-              return newMap;
-            });
-          }
-        }
-      } catch (error) {
-        console.error("Ошибка удаления:", error);
+    if (!window.confirm('Вы уверены, что хотите удалить проект?')) return;
+
+    try {
+      await deleteProject(id).unwrap();
+      const project = projects.find((p) => p.id === id);
+      const imageId = project?.images?.[0]?.id;
+      if (imageId) {
+        const url = imageUrls.get(imageId);
+        if (url) URL.revokeObjectURL(url);
+        setImageUrls((prev) => {
+          const newMap = new Map(prev);
+          newMap.delete(imageId);
+          return newMap;
+        });
       }
+    } catch (error) {
+      console.error('Ошибка удаления:', error);
     }
   };
 
   if (isLoading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+      <div className="flex justify-center mt-8">
         <CircularProgress />
-      </Box>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Box sx={{ p: 3 }}>
-        <Alert severity="error">
-          Ошибка загрузки проектов: {JSON.stringify(error)}
-        </Alert>
-      </Box>
+      <div className="p-4">
+        <Alert severity="error">Ошибка загрузки проектов: {JSON.stringify(error)}</Alert>
+      </div>
     );
   }
 
   return (
-    <Box>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
-        <Typography variant="h5">Проекты</Typography>
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between items-center">
+        <Typography variant="h5">Работа с проектными сметами</Typography>
         <Button
           variant="contained"
           color="primary"
-          onClick={() => navigate({ to: "/projects/new" })}
+          onClick={() => navigate({ to: '/projects/new' })}
         >
           Создать проект
         </Button>
-      </Box>
+      </div>
 
-      <Grid container spacing={3}>
-        {projects.map(project => {
-          const firstImage = project.images?.[0];
-          const imageId = firstImage?.id;
-          const imageUrl = imageId ? imageUrls.get(imageId) : null;
-          const isLoadingImage = imageId ? loadingImages.has(imageId) : false;
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell className="w-20">Фото</TableCell>
+              <TableCell>Название</TableCell>
+              <TableCell>Описание</TableCell>
+              <TableCell align="center" className="w-24">
+                Фото
+              </TableCell>
+              <TableCell align="center" className="w-24">
+                Доки
+              </TableCell>
+              <TableCell align="center" className="w-36">
+                Действия
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {projects.map((project) => {
+              const firstImage = project.images?.[0];
+              const imageId = firstImage?.id;
+              const imageUrl = imageId ? imageUrls.get(imageId) : null;
+              const isLoadingImage = imageId ? loadingImages.has(imageId) : false;
 
-          return (
-            <Grid item xs={12} sm={6} md={4} key={project.id}>
-              <Card
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                {firstImage && imageUrl ? (
-                  <CardMedia
-                    component="img"
-                    height="200"
-                    image={imageUrl}
-                    alt={project.name}
-                    sx={{ objectFit: "cover", cursor: "pointer" }}
-                    onClick={() => navigate({ to: `/projects/${project.id}` })}
-                  />
-                ) : (
-                  <Box
-                    sx={{
-                      height: 200,
-                      bgcolor: "grey.200",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      position: "relative",
-                    }}
-                    onClick={() => navigate({ to: `/projects/${project.id}` })}
-                  >
-                    {isLoadingImage ? (
-                      <CircularProgress size={40} />
-                    ) : (
-                      <ImageIcon sx={{ fontSize: 64, color: "grey.400" }} />
-                    )}
-                  </Box>
-                )}
+              return (
+                <TableRow key={project.id}>
+                  <TableCell>
+                    <div
+                      className="w-14 h-14 bg-gray-100 rounded flex items-center justify-center cursor-pointer overflow-hidden"
+                      onClick={() => navigate({ to: `/projects/${project.id}` })}
+                    >
+                      {firstImage && imageUrl ? (
+                        <img
+                          src={imageUrl}
+                          alt={project.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : isLoadingImage ? (
+                        <CircularProgress size={20} />
+                      ) : (
+                        <ImageIcon className="text-gray-400" fontSize="small" />
+                      )}
+                    </div>
+                  </TableCell>
 
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography
-                    gutterBottom
-                    variant="h6"
-                    component="h2"
-                    sx={{ cursor: "pointer" }}
-                    onClick={() => navigate({ to: `/projects/${project.id}` })}
-                  >
-                    {project.name}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mb: 2 }}
-                  >
-                    {project.description?.substring(0, 100)}
-                    {project.description?.length &&
-                    project.description.length > 100
-                      ? "..."
-                      : ""}
-                  </Typography>
+                  <TableCell>
+                    <span
+                      className="font-medium cursor-pointer hover:underline"
+                      onClick={() => navigate({ to: `/projects/${project.id}` })}
+                    >
+                      {project.name}
+                    </span>
+                  </TableCell>
 
-                  <Box sx={{ display: "flex", gap: 1 }}>
+                  <TableCell>
+                    <span className="text-sm text-gray-600">
+                      {project.description?.slice(0, 50)}
+                      {project.description?.length && project.description.length > 50 ? '...' : ''}
+                    </span>
+                  </TableCell>
+
+                  <TableCell align="center">
                     <Chip
                       icon={<ImageIcon />}
                       label={project._count?.images || 0}
                       size="small"
                       variant="outlined"
                     />
+                  </TableCell>
+
+                  <TableCell align="center">
                     <Chip
                       icon={<DocumentIcon />}
                       label={project._count?.documents || 0}
                       size="small"
                       variant="outlined"
                     />
-                  </Box>
-                </CardContent>
+                  </TableCell>
 
-                <CardActions>
-                  <IconButton
-                    size="small"
-                    color="primary"
-                    onClick={() => navigate({ to: `/projects/${project.id}` })}
-                  >
-                    <Visibility />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    color="secondary"
-                    onClick={() =>
-                      navigate({ to: `/projects/${project.id}/edit` })
-                    }
-                  >
-                    <Edit />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    color="error"
-                    onClick={e => handleDelete(project.id, e)}
-                    disabled={isDeleting}
-                  >
-                    <Delete />
-                  </IconButton>
-                </CardActions>
-              </Card>
-            </Grid>
-          );
-        })}
-      </Grid>
-    </Box>
+                  <TableCell align="center" className="space-x-1">
+                    <IconButton
+                      size="small"
+                      color="primary"
+                      onClick={() => navigate({ to: `/projects/${project.id}` })}
+                      title="Просмотр"
+                    >
+                      <Visibility fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      color="secondary"
+                      onClick={() => navigate({ to: `/projects/${project.id}/edit` })}
+                      title="Редактировать"
+                    >
+                      <Edit fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={(e) => handleDelete(project.id, e)}
+                      disabled={isDeleting}
+                      title="Удалить"
+                    >
+                      <Delete fontSize="small" />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };

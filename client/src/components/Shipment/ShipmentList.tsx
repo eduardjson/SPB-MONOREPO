@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import { Add as AddIcon, MoreVert as MoreIcon, Visibility as ViewIcon } from '@mui/icons-material';
 import {
-  Box,
-  Typography,
   Button,
+  Chip,
+  IconButton,
+  Menu,
+  MenuItem,
   Paper,
   Table,
   TableBody,
@@ -10,37 +12,27 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  IconButton,
-  Chip,
-  Menu,
-  MenuItem,
-} from "@mui/material";
+  Typography,
+} from '@mui/material';
+import React, { useState } from 'react';
 import {
-  Add as AddIcon,
-  Visibility as ViewIcon,
-  MoreVert as MoreIcon,
-} from "@mui/icons-material";
-import {
-  useGetShipmentsQuery,
   useDeleteShipmentMutation,
+  useGetShipmentsQuery,
   useUpdateShipmentStatusMutation,
-} from "../../services";
-import { Shipment, ShipmentStatus } from "../../types";
-import { ShipmentForm } from "./ShipmentForm";
+} from '../../services';
+import { Shipment, ShipmentStatus } from '../../types';
+import { ShipmentForm } from './ShipmentForm';
 
-const statusColors: Record<
-  ShipmentStatus,
-  "default" | "primary" | "success" | "error"
-> = {
-  PENDING: "primary",
-  COMPLETED: "success",
-  CANCELLED: "error",
+const statusColors: Record<ShipmentStatus, 'default' | 'primary' | 'success' | 'error'> = {
+  PENDING: 'primary',
+  COMPLETED: 'success',
+  CANCELLED: 'error',
 };
 
 const statusLabels: Record<ShipmentStatus, string> = {
-  PENDING: "В обработке",
-  COMPLETED: "Выполнена",
-  CANCELLED: "Отменена",
+  PENDING: 'В обработке',
+  COMPLETED: 'Выполнена',
+  CANCELLED: 'Отменена',
 };
 
 export const ShipmentList: React.FC = () => {
@@ -49,9 +41,7 @@ export const ShipmentList: React.FC = () => {
   const [updateStatus] = useUpdateShipmentStatusMutation();
   const [openForm, setOpenForm] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
-  const [selectedShipment, setSelectedShipment] = useState<Shipment | null>(
-    null,
-  );
+  const [selectedShipment, setSelectedShipment] = useState<Shipment | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedForMenu, setSelectedForMenu] = useState<string | null>(null);
 
@@ -71,7 +61,7 @@ export const ShipmentList: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Вы уверены, что хотите удалить отгрузку?")) {
+    if (window.confirm('Вы уверены, что хотите удалить отгрузку?')) {
       await deleteShipment(id);
     }
     handleMenuClose();
@@ -89,9 +79,9 @@ export const ShipmentList: React.FC = () => {
   }
 
   return (
-    <Box>
+    <div className="flex flex-col gap-4">
       <div className="flex flex-row justify-between">
-        <Typography variant="h5">Отгрузка со склада</Typography>
+        <Typography variant="h5">Отгрузка по накладной</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -118,11 +108,10 @@ export const ShipmentList: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {shipments?.map(shipment => {
+            {shipments?.map((shipment) => {
               const totalItems = shipment.items?.length || 0;
               const totalQuantity =
-                shipment.items?.reduce((sum, item) => sum + item.quantity, 0) ||
-                0;
+                shipment.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
               return (
                 <TableRow key={shipment.id}>
@@ -131,8 +120,8 @@ export const ShipmentList: React.FC = () => {
                       {shipment.id.substring(0, 8)}...
                     </Typography>
                   </TableCell>
-                  <TableCell>{shipment.warehouse?.name || "—"}</TableCell>
-                  <TableCell>{shipment.object?.name || "—"}</TableCell>
+                  <TableCell>{shipment.warehouse?.name || '—'}</TableCell>
+                  <TableCell>{shipment.object?.name || '—'}</TableCell>
                   <TableCell>
                     {totalItems} позиций ({totalQuantity} шт)
                   </TableCell>
@@ -143,20 +132,14 @@ export const ShipmentList: React.FC = () => {
                       size="small"
                     />
                   </TableCell>
+                  <TableCell>{new Date(shipment.created_at).toLocaleDateString()}</TableCell>
                   <TableCell>
-                    {new Date(shipment.created_at).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleView(shipment)}
-                      title="Просмотр"
-                    >
+                    <IconButton size="small" onClick={() => handleView(shipment)} title="Просмотр">
                       <ViewIcon />
                     </IconButton>
                     <IconButton
                       size="small"
-                      onClick={e => handleMenuOpen(e, shipment.id)}
+                      onClick={(e) => handleMenuOpen(e, shipment.id)}
                       title="Действия"
                     >
                       <MoreIcon />
@@ -169,20 +152,12 @@ export const ShipmentList: React.FC = () => {
         </Table>
       </TableContainer>
 
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-      >
-        <MenuItem onClick={() => handleStatusChange("COMPLETED")}>
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+        <MenuItem onClick={() => handleStatusChange('COMPLETED')}>
           Отметить как выполненную
         </MenuItem>
-        <MenuItem onClick={() => handleStatusChange("CANCELLED")}>
-          Отменить отгрузку
-        </MenuItem>
-        <MenuItem
-          onClick={() => selectedForMenu && handleDelete(selectedForMenu)}
-        >
+        <MenuItem onClick={() => handleStatusChange('CANCELLED')}>Отменить отгрузку</MenuItem>
+        <MenuItem onClick={() => selectedForMenu && handleDelete(selectedForMenu)}>
           Удалить
         </MenuItem>
       </Menu>
@@ -200,6 +175,6 @@ export const ShipmentList: React.FC = () => {
           shipmentId={selectedShipment.id}
         />
       )}
-    </Box>
+    </div>
   );
 };
